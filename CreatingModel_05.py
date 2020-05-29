@@ -3,9 +3,7 @@ import torch.nn.functional as F
 import torch
 
 import platform
-from torch.utils.data import DataLoader
-from CreateDataset_02 import MNISTDataset
-from torchvision import transforms
+from CreateDataset_02 import MNISTDataset, ToTensor
 
 
 class Model(nn.Module):
@@ -36,7 +34,7 @@ class Model(nn.Module):
 
 if __name__ == '__main__':
     train_dataset = MNISTDataset(
-        'train.csv', 'Dataset/MNISTDataSet/train', transform=transforms.ToTensor())
+        'train.csv', 'Dataset/MNISTDataSet/train', transform=ToTensor())
 
     model = Model()
     torch.set_grad_enabled(False)
