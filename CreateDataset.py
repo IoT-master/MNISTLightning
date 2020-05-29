@@ -2,7 +2,7 @@ import pandas as pd
 from pathlib import Path
 import torch
 from matplotlib import image
-from torch.utils.data import Dataset, DataLoader
+from torch.utils.data import Dataset
 import numpy as np
 from torchvision import transforms
 
