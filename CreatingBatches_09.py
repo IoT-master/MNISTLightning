@@ -2,7 +2,7 @@ from torch.utils.data import DataLoader
 import platform
 import torch
 from CreateDataset_02 import MNISTDataset, ToTensor
-import torchvision
+
 
 torch.set_printoptions(linewidth=120)
 torch.set_grad_enabled(True)
@@ -18,12 +18,14 @@ batch_loader_params = {
 train_batches = DataLoader(train_dataset, **batch_loader_params)
 
 if __name__ == '__main__':
+    import torchvision
+    import matplotlib.pyplot as plt
+    import numpy as np
+
     batch_samples = iter(train_batches)
     samples = batch_samples.next()
     print(samples['image'].shape)
     datset_batch = torchvision.utils.make_grid(samples['image'])
-    import matplotlib.pyplot as plt
-    import numpy as np
 
     def imshow(img):
         npimg = img.numpy()
