@@ -14,6 +14,8 @@ if __name__ == '__main__':
         return preds.argmax(dim=1).eq(labels).sum().item()
 
     model = Model()
+    print(model)
+
     optimizer = optim.Adam(model.parameters(), lr=0.01)
     sample = next(iter(train_dataset))
     image = sample['image']
