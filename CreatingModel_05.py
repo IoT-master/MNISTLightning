@@ -37,6 +37,7 @@ if __name__ == '__main__':
         'train.csv', 'Dataset/MNISTDataSet/train', transform=ToTensor())
 
     model = Model()
+    print(model)
     torch.set_grad_enabled(False)
     sample = next(iter(train_dataset))
     image = sample['image']

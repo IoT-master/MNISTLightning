@@ -2,7 +2,7 @@ from torch.utils.data import DataLoader
 import platform
 import torch
 from CreateDataset_02 import MNISTDataset, ToTensor
-
+import torch
 
 torch.set_printoptions(linewidth=120)
 torch.set_grad_enabled(True)
