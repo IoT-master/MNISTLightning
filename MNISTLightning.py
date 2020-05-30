@@ -97,6 +97,34 @@ class LitModel(LightningModule):
         train_batches = DataLoader(train_dataset, **batch_loader_params)
         return train_batches
 
+    def test_step(self, batch, batch_idx):
+        images = batch['image']
+        labels = batch['label']
+        preds = self(images)
+        return {'test_loss': F.cross_entropy(preds, labels)}
+
+    def test_epoch_end(self, outputs):
+        # _, predicted = torch.max(outputs.data, 1)
+        # total += labels.size(0)
+        # correct += (predicted == labels).sum().item()
+        # avg_loss =
+        avg_loss = torch.stack([x['test_loss'] for x in outputs]).mean()
+        tensorboard_logs = {'test_loss': avg_loss}
+        return {'avg_test_loss': avg_loss, 'log': tensorboard_logs}
+
+    def test_dataloader(self):
+        # TODO: do a real train/val split
+        test_dataset = MNISTDataset(
+            'test.csv', 'Dataset/MNISTDataSet/test', transform=ToTensor())
+
+        batch_loader_params = {
+            "batch_size": 25,
+            "shuffle": False,
+            "num_workers": 2
+        }
+        test_batches = DataLoader(test_dataset, **batch_loader_params)
+        return test_batches
+
 
 model = LitModel()
 
@@ -104,4 +132,10 @@ model = LitModel()
 # trainer = Trainer(gpus=8, num_nodes=1)
 trainer = Trainer()
 trainer.fit(model)
-torch.save(model.state_dict(), 'MNISTModelLIB.pt')
+# trainer = Trainer(default_save_path='/your/path/to/save/checkpoints')
+# trainer = Trainer(checkpoint_callback=False)
+
+# trainer.save_checkpoint("example.ckpt")
+# new_model = MyModel.load_from_checkpoint(checkpoint_path="example.ckpt")
+
+# https://pytorch-lightning.readthedocs.io/en/latest/weights_loading.html#restoring-training-state
