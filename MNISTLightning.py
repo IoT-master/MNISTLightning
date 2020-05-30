@@ -101,16 +101,19 @@ class LitModel(LightningModule):
         images = batch['image']
         labels = batch['label']
         preds = self(images)
-        return {'test_loss': F.cross_entropy(preds, labels)}
+        _, predicted = torch.max(preds.data, 1)
+        return {'test_loss': F.cross_entropy(preds, labels),
+                'size_of_data': torch.tensor(labels.shape[0]),
+                'num_correct_preds': torch.eq(predicted, labels)}
 
     def test_epoch_end(self, outputs):
-        # _, predicted = torch.max(outputs.data, 1)
-        # total += labels.size(0)
-        # correct += (predicted == labels).sum().item()
-        # avg_loss =
+        total_correct = torch.stack(
+            [x['num_correct_preds'] for x in outputs]).sum()
         avg_loss = torch.stack([x['test_loss'] for x in outputs]).mean()
         tensorboard_logs = {'test_loss': avg_loss}
-        return {'avg_test_loss': avg_loss, 'log': tensorboard_logs}
+        return {'avg_test_loss': avg_loss,
+                'log': tensorboard_logs,
+                'total_correct': total_correct}
 
     def test_dataloader(self):
         # TODO: do a real train/val split
@@ -118,24 +121,22 @@ class LitModel(LightningModule):
             'test.csv', 'Dataset/MNISTDataSet/test', transform=ToTensor())
 
         batch_loader_params = {
-            "batch_size": 25,
+            "batch_size": 500,
             "shuffle": False,
-            "num_workers": 2
+            "num_workers": 4
         }
         test_batches = DataLoader(test_dataset, **batch_loader_params)
         return test_batches
 
 
-model = LitModel()
+# model = LitModel()
+# trainer = Trainer()
+# trainer.fit(model)
 
-# most basic trainer, uses good defaults
-# trainer = Trainer(gpus=8, num_nodes=1)
+
+model = LitModel.load_from_checkpoint(
+    checkpoint_path="lightning_logs/version_2/checkpoints/epoch=4.ckpt")
 trainer = Trainer()
-trainer.fit(model)
-# trainer = Trainer(default_save_path='/your/path/to/save/checkpoints')
-# trainer = Trainer(checkpoint_callback=False)
-
-# trainer.save_checkpoint("example.ckpt")
-# new_model = MyModel.load_from_checkpoint(checkpoint_path="example.ckpt")
+trainer.test(model)
 
 # https://pytorch-lightning.readthedocs.io/en/latest/weights_loading.html#restoring-training-state

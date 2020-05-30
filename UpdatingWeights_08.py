@@ -24,7 +24,7 @@ if __name__ == '__main__':
     image_batch = image.unsqueeze(0)
 
     preds = model(image_batch)
-    loss = F.cross_entropy(preds, labels)
+    loss = F.cross_entropy(preds, labels.unsqueeze(0))
     # print(model.conv1.weight.grad)
     loss.backward()
     print(model.conv1.weight.grad.shape)
