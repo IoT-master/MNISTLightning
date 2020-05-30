@@ -129,3 +129,4 @@ dmypy.json
 .pyre/
 Dataset
 .vscode
+lightning_logs
