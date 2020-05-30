@@ -17,7 +17,7 @@ class ToTensor(object):
         # torch image: C X H X W
         return {'image': torch.FloatTensor(image).unsqueeze(0),
                 #         return {'image': torch.from_numpy(image),
-                'label': torch.from_numpy(np.array(label)).unsqueeze(0)}
+                'label': torch.from_numpy(np.array(label))}
 
 
 class MNISTDataset(Dataset):
